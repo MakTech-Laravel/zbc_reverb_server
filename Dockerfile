@@ -14,11 +14,12 @@ WORKDIR /var/www
 
 COPY composer.json composer.lock ./
 
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# Skip Laravel scripts until artisan and the app skeleton are copied.
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
 COPY . .
 
-RUN composer dump-autoload --optimize --no-interaction \
+RUN composer install --no-dev --optimize-autoloader --no-interaction \
     && chown -R www-data:www-data /var/www \
     && chmod -R 755 storage bootstrap/cache
 

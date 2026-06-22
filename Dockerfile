@@ -1,6 +1,5 @@
 FROM php:8.4-cli
 
-# Install system dependencies required by Reverb
 RUN apt-get update && apt-get install -y \
     git curl unzip libpng-dev libonig-dev \
     libxml2-dev libzip-dev \
@@ -14,7 +13,6 @@ WORKDIR /var/www
 
 COPY composer.json composer.lock ./
 
-# Skip Laravel scripts until artisan and the app skeleton are copied.
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
 COPY . .
@@ -25,4 +23,10 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction \
 
 EXPOSE 8080
 
-CMD ["php", "artisan", "reverb:start", "--host=0.0.0.0", "--port=8080"]
+# Write .env from Docker environment variables, then start Reverb
+CMD sh -c '\
+  printenv | grep -E "^(APP_|DB_|CACHE_|REVERB_|LOG_|FRONTEND_)" | \
+  sed "s/=\(.*\)/=\1/" > /var/www/.env && \
+  php artisan config:clear && \
+  php artisan reverb:start --host=0.0.0.0 --port=8080 --no-interaction\
+'

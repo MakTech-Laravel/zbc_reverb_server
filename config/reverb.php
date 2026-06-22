@@ -32,7 +32,7 @@ return [
             'host' => env('REVERB_SERVER_HOST', '0.0.0.0'),
             'port' => env('REVERB_SERVER_PORT', 8080),
             'path' => env('REVERB_SERVER_PATH', ''),
-            'hostname' => env('REVERB_HOST'),
+            'hostname' => env('REVERB_HOST', 'ws.zbc-news.maktechlaravel.cloud'),
             'options' => [
                 'tls' => [],
             ],
@@ -77,14 +77,14 @@ return [
                 'secret' => env('REVERB_APP_SECRET'),
                 'app_id' => env('REVERB_APP_ID'),
                 'options' => [
-                    'host' => env('REVERB_HOST'),
+                    'host' => env('REVERB_HOST', 'ws.zbc-news.maktechlaravel.cloud'),
                     'port' => env('REVERB_PORT', 443),
                     'scheme' => env('REVERB_SCHEME', 'https'),
                     'useTLS' => env('REVERB_SCHEME', 'https') === 'https',
                 ],
                 'allowed_origins' => array_values(array_filter(array_map(
                     'trim',
-                    explode(',', (string) env('REVERB_ALLOWED_ORIGINS', 'http://localhost:5173,http://localhost:3000'))
+                    explode(',', (string) env('REVERB_ALLOWED_ORIGINS', 'http://localhost:5173,http://localhost:3000,https://zbc.maktechlaravel.cloud'))
                 ))),
                 'ping_interval' => env('REVERB_APP_PING_INTERVAL', 60),
                 'activity_timeout' => env('REVERB_APP_ACTIVITY_TIMEOUT', 30),

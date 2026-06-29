@@ -1,0 +1,30 @@
+name: Deploy Reverb
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    name: Deploy to GCP Server
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.GCP_SERVER_IP }}
+          username: ${{ secrets.GCP_SERVER_USER }}
+          key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            cd /var/www/zbc-news
+
+            echo "── Pulling latest reverb code ──"
+            git -C reverb checkout -- .
+            git -C reverb pull origin main
+
+            echo "── Rebuilding reverb container ──"
+            docker compose --env-file .env up -d --build reverb
+
+            echo "── Reverb deployed at $(date) ──"
